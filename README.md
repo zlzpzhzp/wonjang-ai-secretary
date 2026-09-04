@@ -25,7 +25,7 @@
 | 1 | 가상 서버(VPS) 구독 | [setup/01-vps.md](setup/01-vps.md) | 10분 |
 | 2 | Claude CLI 설치·로그인 + 텔레그램 연동 | [setup/02-claude-telegram.md](setup/02-claude-telegram.md) | 10분 |
 | 3 | 텔레그램으로 비서에게 이 레포 링크 주기 | [setup/03-give-this-repo.md](setup/03-give-this-repo.md) | 1분 |
-| 4 | 안드로이드 폰 세팅 (문자·통화 → 서버) | [setup/04-android.md](setup/04-android.md) | 15분 |
+| 4 | 안드로이드 폰 세팅 (문자·카톡·통화·음성메모 → 서버, 시행착오 12건 포함) | [setup/04-android.md](setup/04-android.md) | 15분 |
 | 5 | 솔라피(문자 대행발송) 가입 | [setup/05-solapi.md](setup/05-solapi.md) | 10분 |
 
 3단계에서 비서에게 링크를 주면 **비서가 나머지를 알아서 설치합니다.**
