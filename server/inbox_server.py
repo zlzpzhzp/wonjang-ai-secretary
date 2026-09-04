@@ -147,6 +147,8 @@ async def sms(request: Request, x_internal_token: str = Header(None)):
         extra = {k: (v[0][:80] if v else "") for k, v in q.items() if k not in known}
         if extra:
             print(f"[sms] extra keys: {extra!r}", flush=True)
+    # 삼성 메시지 앱 알림의 제목(발신자)은 방향성 유니코드(U+2068/U+2069)로 감싸져 온다 — 벗겨서 저장.
+    sender = sender.replace("\u2068", "").replace("\u2069", "").strip()
     if not text.strip():
         return {"ok": False, "reason": "empty"}
     src = "kakao" if any(k in appname.lower() for k in ("kakao", "카카오", "카톡")) else "sms"
