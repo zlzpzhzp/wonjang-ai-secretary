@@ -15,6 +15,7 @@
   (공개 URL 은 cloudflared 터널로만. 0.0.0.0 으로 열지 마세요.)
 """
 import fcntl
+import hashlib
 import hmac
 import json
 import os
@@ -36,6 +37,7 @@ if not TOKEN:
     raise SystemExit("INBOX_TOKEN 이 비어 있습니다. .env 를 채우고 `set -a; source .env; set +a` 후 실행하세요.")
 
 app = FastAPI()
+_recent_audio: dict = {}  # sha256 -> last seen
 _recent: dict[tuple, float] = {}
 
 
@@ -139,6 +141,12 @@ async def sms(request: Request, x_internal_token: str = Header(None)):
         q = parse_qs(raw, keep_blank_values=True)
         g = lambda *ks: next((q[k][0] for k in ks if q.get(k)), "")
         sender, text, ts, appname = g("from", "sender"), g("text", "body", "message"), g("ts", "time"), g("app", "package")
+        # 진단용: 아는 키 말고 온 것들도 로그에 남긴다. 카톡 알림 구조가 바뀌어 "방 이름이 어느 칸에 있나"를
+        # 찾을 때, 폰 매크로에 후보 변수를 여러 개 실어 보내고 여기 journal 에서 키·값을 눈으로 본다.
+        known = {"from", "sender", "text", "body", "message", "ts", "time", "app", "package"}
+        extra = {k: (v[0][:80] if v else "") for k, v in q.items() if k not in known}
+        if extra:
+            print(f"[sms] extra keys: {extra!r}", flush=True)
     if not text.strip():
         return {"ok": False, "reason": "empty"}
     src = "kakao" if any(k in appname.lower() for k in ("kakao", "카카오", "카톡")) else "sms"
@@ -154,6 +162,14 @@ async def call(request: Request, x_internal_token: str = Header(None)):
     audio, fname = await _read_audio(request)
     if len(audio) < 200:
         return {"ok": False, "reason": "no audio"}
+    # 같은 녹음이 6시간 안에 또 오면 버린다 — 부재중 통화에서 폰 매크로가 "직전 녹음 파일"을 다시 쏘는 사고 방어.
+    digest = hashlib.sha256(audio).hexdigest()
+    now = time.time()
+    for h in [h for h, t in _recent_audio.items() if now - t > 6 * 3600]:
+        _recent_audio.pop(h, None)
+    if digest in _recent_audio:
+        return {"ok": True, "reason": "duplicate_audio", "skipped": True}
+    _recent_audio[digest] = now
     text = transcribe(audio, fname)
     if not text:
         return {"ok": False, "reason": "transcribe_failed"}
