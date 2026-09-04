@@ -23,7 +23,7 @@ Claude 유료 구독(Pro/Max) 계정으로 로그인하면 됩니다. 로그인 
 
 1. 텔레그램에서 **@BotFather** 검색 → `/newbot` → 이름·아이디 입력 → **토큰**을 받습니다. (`123456:ABC-...` 형태)
 2. 만든 봇에게 아무 말이나 한 번 보냅니다.
-3. 브라우저에서 `https://api.telegram.org/bot<토큰>/getUpdates` 를 열면 `"chat":{"id":8446…}` 처럼 **내 chat_id** 가 보입니다.
+3. 브라우저에서 `https://api.telegram.org/bot<토큰>/getUpdates` 를 열면 `"chat":{"id":123456789}` 처럼 **내 chat_id** 가 보입니다.
 
 ## 2-4. 텔레그램 플러그인 켜기
 
