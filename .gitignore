@@ -1,0 +1,11 @@
+.env
+data/*
+!data/.gitkeep
+memory/*
+!memory/MEMORY.md
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.log
+.claude/channels/
