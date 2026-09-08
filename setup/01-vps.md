@@ -26,6 +26,26 @@ ssh root@<서버IP>
 apt update && apt install -y git tmux curl python3 python3-venv python3-pip jq
 ```
 
+## 우분투가 아니라 로키(Rocky)·알마(Alma)·CentOS 로 만드셨다면
+
+**다시 안 파셔도 됩니다.** 이 매뉴얼에서 실제로 안 맞는 건 패키지 설치 명령 하나뿐입니다.
+Claude CLI·텔레그램 연동·폰 세팅·솔라피는 배포판을 가리지 않습니다.
+
+바꿔 쓰실 것은 이것뿐입니다:
+
+```bash
+dnf install -y git tmux curl python3 python3-pip jq
+```
+
+(`python3-venv` 는 따로 없습니다. 로키에서는 python3 에 이미 들어 있습니다.)
+
+앞으로 매뉴얼에 `apt install` 이 나오면 `dnf install` 로 읽으시면 됩니다.
+
+한 가지만 미리 알아두세요. 레드햇 계열은 **SELinux** 라는 보안 기능이 기본으로 켜져 있어서,
+나중에 웹서버나 터널을 붙일 때 "권한 없음(Permission denied)" 이 한 번 날 수 있습니다.
+그때는 서버에서 `sudo ausearch -m avc -ts recent` 를 쳐서 나온 내용을 그대로 Claude 에게 보여주시면
+어디를 열어야 하는지 알려줍니다. **SELinux 를 통째로 끄지는 마세요** — 그건 문을 다 열어두는 것과 같습니다.
+
 ## 두 가지 약속
 
 1. **서버 프로그램은 127.0.0.1 에만 묶고, 바깥 공개는 터널로.** (4단계에서 cloudflared 로 폰→서버 길을 엽니다. 포트를 0.0.0.0 으로 열면 전 세계에서 두드립니다.)
